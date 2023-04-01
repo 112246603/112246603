@@ -103,6 +103,51 @@ GitHub 仓库地址: https://www.example.com/
 
 
 ```
+### 检查网站可访问性
+```python
+
+import requests
+
+
+def check_website(url, proxies=None):
+    try:
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            print('网站可以正常访问', url)
+            return 1
+        else:
+            print('网站无法正常访问，状态码为{}'.format(response.status_code))
+
+    except requests.exceptions.RequestException as e:
+        print('无法通过普通方式访问网站，错误信息为{}'.format(e))
+
+        if proxies is not None:
+            try:
+                response = requests.get(url, proxies=proxies)
+
+                if response.status_code == 200:
+                    print('通过代理方式可以访问网站', url)
+                    return 2
+                else:
+                    print('通过代理方式仍无法访问网站，状态码为{}'.format(response.status_code))
+
+            except requests.exceptions.RequestException as e:
+                print('无法通过代理方式访问网站，错误信息为{}'.format(e))
+
+    return 0
+
+
+proxies = {
+    "http": "http://127.0.0.1:2233",
+    "https": "http://127.0.0.1:2233"
+}
+
+status = check_website('https://www.google.com', proxies)
+
+print(status)
+```
+
 
 ### GitHubAction自动同步
 
